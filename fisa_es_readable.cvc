@@ -36,7 +36,8 @@ electronic_surveillance: ATTACK -> BOOLEAN;                 % What we want to kn
 ASSERT acquired(communication) <=> TRUE;
 ASSERT surveillance_device(device) <=> TRUE;
 ASSERT communication_type(communication, wire) <=> TRUE;
-ASSERT targeted(sender) <=> TRUE;ASSERT targeted(recipient) <=> TRUE;
+ASSERT targeted(sender) <=> TRUE;
+ASSERT targeted(intended_recipients) <=> TRUE;
 ASSERT communication_type(communication, radio) <=> TRUE;
 ASSERT US_person(sender) <=> TRUE;
 ASSERT known_and_particular(sender) <=> TRUE;
@@ -48,55 +49,55 @@ ASSERT location(intended_recipients, US) <=> TRUE;
 ASSERT privacy(sender) <=> TRUE;
 ASSERT privacy(intended_recipients) <=> TRUE;
 ASSERT warrant(attack) <=> TRUE;
-ASSERT consented(sender) <=> TRUE;
+ASSERT consented(sender) <=> FALSE;
 ASSERT consented(intended_recipients) <=> TRUE;
 ASSERT intentional(attack) <=> TRUE;
 ASSERT covered(attack) <=> TRUE;
 ASSERT monitoring(device) <=> TRUE;
 
-ASSERT ( 
-    acquired(communication) AND surveillance_device(device) AND (communication_type(communication, wire) OR communication_type(communication, radio))
-) AND (
-    ( 
-        US_person(sender) AND known_and_particular(sender) AND location(sender, US)
-    ) OR (
-        US_person(intended_recipients) AND known_and_particular(intended_recipients) AND location(intended_recipients, US) 
-    )
-) AND (
-    (
-        privacy(sender) OR privacy(intended_recipients)
-    ) AND (
-        warrant(attack)
-    )
-) => electronic_surveillance(attack);
+ASSERT 
+        ( 
+            acquired(communication) AND surveillance_device(device) AND (communication_type(communication, wire) OR communication_type(communication, radio))
+        ) AND (
+            ( 
+                US_person(sender) AND known_and_particular(sender) AND location(sender, US) AND targeted(sender)
+            ) OR (
+                US_person(intended_recipients) AND known_and_particular(intended_recipients) AND location(intended_recipients, US) AND targeted(intended_recipients)
+            )
+        ) AND (
+            (
+                privacy(sender) AND privacy(intended_recipients) %see Notes1 for reasoning on AND
+            ) AND (
+                warrant(attack)
+            )
+        ) 
+    OR 
+        ( 
+        acquired(communication) AND surveillance_device(device) AND communication_type(communication, wire)
+        ) AND (
+            location(sender, US) OR location(intended_recipients, US)
+        ) AND (
+            NOT consented(sender) AND NOT consented(intended_recipients) AND location(attacker, US) AND NOT covered(attack)
+        ) 
+    OR
+        (
+            intentional(attack) AND acquired(communication) AND surveillance_device(device) AND communication_type(communication, radio)
+        ) AND (
+            privacy(sender) AND privacy(intended_recipients)
+        ) AND (
+            warrant(attack) AND location(sender, US) AND location(intended_recipients, US)
+        ) 
+    OR
+        (
+            monitoring(device) AND surveillance_device(device) AND location(attacker, US)
+        ) AND (
+            NOT (communication_type(communication, wire) OR communication_type(communication, radio))
+        ) AND (
+            privacy(sender) AND privacy(intended_recipients)
+        ) AND (
+            warrant(attack)
+        ) 
+    => electronic_surveillance(attack);
 
-
-ASSERT ( 
-    acquired(communication) AND surveillance_device(device) AND communication_type(communication, wire)
-    ) AND (
-        location(sender, US) OR location(intended_recipients, US)
-    ) AND (
-        NOT consented(sender) AND NOT consented(intended_recipients) AND location(attacker, US) AND NOT covered(attack)
-    ) => electronic_surveillance(attack);
-
-
-ASSERT (
-        intentional(attack) AND acquired(communication) AND surveillance_device(device) 
-    ) AND (
-        privacy(sender) OR privacy(intended_recipients)
-    ) AND (
-        warrant(attack) AND location(sender, US) AND location(intended_recipients, US)
-    ) => electronic_surveillance(attack);
-
-
-ASSERT (
-        monitoring(device) AND surveillance_device(device) AND location(attacker, US)
-    ) AND (
-        NOT (communication_type(communication, wire) OR communication_type(communication, radio))
-    ) AND (
-        privacy(sender) OR privacy(intended_recipients)
-    ) AND (
-        warrant(attack)
-    )=> electronic_surveillance(attack);
 
 QUERY electronic_surveillance(attack);

@@ -95,9 +95,9 @@
          
          let targeted_recipient = $("#targeted_recipient").val();
          if (targeted_recipient == 1) {
-            output_str = output_str + `ASSERT targeted(recipient) <=> TRUE;`
+            output_str = output_str + `ASSERT targeted(intended_recipients) <=> TRUE;`
          } else if (targeted_recipient == 2) {
-            output_str = output_str + `ASSERT targeted(recipient) <=> FALSE;`
+            output_str = output_str + `ASSERT targeted(intended_recipients) <=> FALSE;`
          }
 
          output_str = output_str + '\n'

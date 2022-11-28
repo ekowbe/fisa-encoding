@@ -3,7 +3,7 @@
 
 # -----------------------------------------------------------------------
 # reg.py
-# Author: Ekow Bentsi-Enchill
+# Author: Ekow Bentsi-Enchill, Elven Shum, Autumn Pearce
 # -----------------------------------------------------------------------
 
 import os
@@ -24,27 +24,27 @@ def index():
 
     questions = {
         "acquired": "was info or communication acquired?",
-        "surveillance": "is this device an electronic, mechanical, or other surveillance device?",
-        "wire": "was the communication a wire?",
-        "radio": "was the communication a radio?",
+        "surveillance": "was the installed or used device an electronic, mechanical, or other surveillance device?",
+        "wire": "was the intercepted communication a wire?",
+        "radio": "was the intercepted communication a radio?",
         "US_location_sender": "was the sender in the United States during the acquisition?",
         "US_location_attacker": "was the potential attacker in the United States during the acquisition?",
         "targeted_sender": "was the sender targeted?",
-        "targeted_recipient": "was the recipient targeted?",
+        "targeted_recipient": "were the intended recipients targeted?",
         "privacy": "was there a reasonable expectation of privacy for this person?",
-        "warrant": "would a warrant be required for law enforcement?",
+        "warrant": "would a warrant be required for law enforcement purposes?",
         "us_person": "is this person considered a US person? or is any person within this list of person considered a US person?",
-        "known_and_particular": "is a person in this list is particular and known to be a US person?",
+        "known_and_particular": "is the sender a particular and known",
         "privacy_sender": "did the sender have a reasonable expectation of privacy?",
         "privacy_recipients": "did the recipient have a reasonable expectation of privacy?",
         "intended_recipients_US": "are the intended recipients US persons?",
-        "known_and_particular_recipients": "is a person in the list of intended recipients particular and known to be a US person?",
+        "known_and_particular_recipients": "is a person in the list of intended recipients particular and known",
         "intended_recipients_in_US": "are the intended recipients US persons?",
         "consented_sender": "did the sender consent to the acquisition in question?",
         "consented_recipient": "did the recipient consent to the acquisition in question?",
         "covered": "is this the communication of computer trespassers, permissible under section 2511(2)(i) of title 18?",
         "monitoring": "was this device installed or used for monitoring to acquire info?",
-        "intentional": "was the acquisition intentional?",
+        "intentional": "was the act-in-question intentional?",
 
     }
 
@@ -98,50 +98,50 @@ electronic_surveillance: ATTACK -> BOOLEAN;                 % What we want to kn
 """
     axioms = request.args.get('axioms')
     formulas = """
-ASSERT ( 
-    acquired(communication) AND surveillance_device(device) AND (communication_type(communication, wire) OR communication_type(communication, radio))
-) AND (
-    ( 
-        US_person(sender) AND known_and_particular(sender) AND location(sender, US)
-    ) OR (
-        US_person(intended_recipients) AND known_and_particular(intended_recipients) AND location(intended_recipients, US) 
-    )
-) AND (
-    (
-        privacy(sender) OR privacy(intended_recipients)
-    ) AND (
-        warrant(attack)
-    )
-) => electronic_surveillance(attack);
+ASSERT 
+        ( 
+            acquired(communication) AND surveillance_device(device) AND (communication_type(communication, wire) OR communication_type(communication, radio))
+        ) AND (
+            ( 
+                US_person(sender) AND known_and_particular(sender) AND location(sender, US) AND targeted(sender)
+            ) OR (
+                US_person(intended_recipients) AND known_and_particular(intended_recipients) AND location(intended_recipients, US) AND targeted(intended_recipients)
+            )
+        ) AND (
+            (
+                privacy(sender) AND privacy(intended_recipients) %see Notes1 for reasoning on AND
+            ) AND (
+                warrant(attack)
+            )
+        ) 
+    OR 
+        ( 
+        acquired(communication) AND surveillance_device(device) AND communication_type(communication, wire)
+        ) AND (
+            location(sender, US) OR location(intended_recipients, US)
+        ) AND (
+            NOT consented(sender) AND NOT consented(intended_recipients) AND location(attacker, US) AND NOT covered(attack)
+        ) 
+    OR
+        (
+            intentional(attack) AND acquired(communication) AND surveillance_device(device) AND communication_type(communication, radio)
+        ) AND (
+            privacy(sender) AND privacy(intended_recipients)
+        ) AND (
+            warrant(attack) AND location(sender, US) AND location(intended_recipients, US)
+        ) 
+    OR
+        (
+            monitoring(device) AND surveillance_device(device) AND location(attacker, US)
+        ) AND (
+            NOT (communication_type(communication, wire) OR communication_type(communication, radio))
+        ) AND (
+            privacy(sender) AND privacy(intended_recipients)
+        ) AND (
+            warrant(attack)
+        ) 
+    => electronic_surveillance(attack);
 
-
-ASSERT ( 
-    acquired(communication) AND surveillance_device(device) AND communication_type(communication, wire)
-    ) AND (
-        location(sender, US) OR location(intended_recipients, US)
-    ) AND (
-        NOT consented(sender) AND NOT consented(intended_recipients) AND location(attacker, US) AND NOT covered(attack)
-    ) => electronic_surveillance(attack);
-
-
-ASSERT (
-        intentional(attack) AND acquired(communication) AND surveillance_device(device) 
-    ) AND (
-        privacy(sender) OR privacy(intended_recipients)
-    ) AND (
-        warrant(attack) AND location(sender, US) AND location(intended_recipients, US)
-    ) => electronic_surveillance(attack);
-
-
-ASSERT (
-        monitoring(device) AND surveillance_device(device) AND location(attacker, US)
-    ) AND (
-        NOT (communication_type(communication, wire) OR communication_type(communication, radio))
-    ) AND (
-        privacy(sender) OR privacy(intended_recipients)
-    ) AND (
-        warrant(attack)
-    )=> electronic_surveillance(attack);
 
 QUERY electronic_surveillance(attack);
 """
@@ -159,11 +159,11 @@ QUERY electronic_surveillance(attack);
 
     if output == "entailed":
         html = """
-                This is an attack
+                This is was an act of Electronic Surveillance.
         """
     else:
         html = """
-                This ain't an attack
+                This is not conclusively Electronic Surveillance. 
         """
         
     response = make_response(html)
