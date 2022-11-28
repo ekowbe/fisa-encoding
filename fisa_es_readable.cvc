@@ -1,37 +1,4 @@
-"""module to handle front end"""
-#!/usr/bin/env python
 
-# -----------------------------------------------------------------------
-# reg.py
-# Author: Ekow Bentsi-Enchill
-# -----------------------------------------------------------------------
-
-import os
-from flask import Flask, request, make_response, render_template
-
-# -----------------------------------------------------------------------
-
-app = Flask(__name__, template_folder='.')
-
-# -----------------------------------------------------------------------
-
-# -----------------------------------------------------------------------
-
-@app.route('/', methods=['GET'])
-@app.route('/index', methods=['GET'])
-def index():
-    """home page"""
-
-    html = render_template('index.html',
-                            success=None)
-    response = make_response(html)
-    return response
-
-@app.route('/check_FISA', methods=['GET'])
-def check_FISA():
-    # print(request.args.get('axioms'))
-
-    definitions = """
 COMM: TYPE;
 DEVICE: TYPE;
 COMM_TYP: TYPE;
@@ -66,9 +33,26 @@ monitoring: DEVICE -> BOOLEAN;                              % was this device in
 intentional: ATTACK -> BOOLEAN;                             % was acquisition intentional?
 electronic_surveillance: ATTACK -> BOOLEAN;                 % What we want to know.
 
-"""
-    axioms = request.args.get('axioms')
-    formulas = """
+ASSERT acquired(communication) <=> TRUE;
+ASSERT surveillance_device(device) <=> TRUE;
+ASSERT communication_type(communication, wire) <=> TRUE;
+ASSERT communication_type(communication, radio) <=> TRUE;
+ASSERT US_person(sender) <=> TRUE;
+ASSERT known_and_particular(sender) <=> TRUE;
+ASSERT location(sender, US) <=> TRUE;
+ASSERT location(attacker, US) <=> TRUE;
+ASSERT US_person(intended_recipients) <=> TRUE;
+ASSERT known_and_particular(intended_recipients) <=> TRUE;
+ASSERT location(intended_recipients, US) <=> TRUE;
+ASSERT privacy(sender) <=> TRUE;
+ASSERT privacy(intended_recipients) <=> TRUE;
+ASSERT warrant(attack) <=> TRUE;
+ASSERT consented(sender) <=> TRUE;
+ASSERT consented(intended_recipients) <=> TRUE;
+ASSERT intentional(attack) <=> TRUE;
+ASSERT covered(attack) <=> TRUE;
+ASSERT monitoring(device) <=> TRUE;
+
 ASSERT ( 
     acquired(communication) AND surveillance_device(device) AND (communication_type(communication, wire) OR communication_type(communication, radio))
 ) AND (
@@ -115,29 +99,3 @@ ASSERT (
     )=> electronic_surveillance(attack);
 
 QUERY electronic_surveillance(attack);
-"""
-
-    f = open("fisa_es_readable.cvc", "w")
-    f.write("")
-    f.write(definitions)
-    f.write(axioms)
-    f.write(formulas)
-    f.close()
-
-    os.system("cvc4 -im fisa_es_readable.cvc")
-    output = os.popen("cvc4 -im fisa_es_readable.cvc").read().strip()
-    print(output)
-
-    if output == "entailed":
-        html = """
-                This is an attack
-        """
-    else:
-        html = """
-                This ain't an attack
-        """
-        
-    response = make_response(html)
-    return response
-
-    # print(request.form.get())

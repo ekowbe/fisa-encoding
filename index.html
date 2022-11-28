@@ -14,19 +14,19 @@
 </head>
 
 <body>
-   
+
    <div class="container">
       <h1 class="display-1">Does FISA apply to you?</h1>
       <!-- <form action="check_FISA" method="GET"> -->
-         <div id="myForm">
+      <div id="myForm">
          <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" role="switch" id="acquired">
             <label class="form-check-label" for="acquired">was info or communication acquired?</label>
          </div>
 
          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="surveillance_device">
-            <label class="form-check-label" for="surveillance_device">is this device an electronic, mechanical, or other
+            <input class="form-check-input" type="checkbox" role="switch" id="surveillance">
+            <label class="form-check-label" for="surveillance">is this device an electronic, mechanical, or other
                surveillance device?</label>
          </div>
 
@@ -41,8 +41,15 @@
          </div>
 
          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="US_location">
-            <label class="form-check-label" for="US_location">was the location in the United States</label>
+            <input class="form-check-input" type="checkbox" role="switch" id="US_location_sender">
+            <label class="form-check-label" for="US_location_sender">was the sender in the United States during the
+               acquisition</label>
+         </div>
+
+         <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="US_location_attacker">
+            <label class="form-check-label" for="US_location_attacker">was the potential attacker in the United States
+               during the acquisition</label>
          </div>
 
          <div class="form-check form-switch">
@@ -79,9 +86,29 @@
          </div>
 
          <div class="form-check form-switch">
+            <input name="privacy_sender" class="form-check-input" type="checkbox" role="switch" id="privacy_sender">
+            <label class="form-check-label" for="privacy_sender">Did the sender have a reasonable expectation of
+               privacy</label>
+         </div>
+
+         <div class="form-check form-switch">
+            <input name="privacy_recipients" class="form-check-input" type="checkbox" role="switch"
+               id="privacy_recipients">
+            <label class="form-check-label" for="privacy_recipients">Did the recipient have a reasonable expectation of
+               privacy</label>
+         </div>
+
+         <div class="form-check form-switch">
             <input name="intended_recipients_US" class="form-check-input" type="checkbox" role="switch"
                id="intended_recipients_US">
             <label class="form-check-label" for="intended_recipients_US">are the intended recipients US persons</label>
+         </div>
+
+         <div class="form-check form-switch">
+            <input name="known_and_particular_recipients" class="form-check-input" type="checkbox" role="switch"
+               id="known_and_particular_recipients">
+            <label class="form-check-label" for="known_and_particular_recipients">is a person in the list of intended recipients particular and known
+               to be a US person</label>
          </div>
 
          <div class="form-check form-switch">
@@ -91,8 +118,16 @@
          </div>
 
          <div class="form-check form-switch">
-            <input name="consented" class="form-check-input" type="checkbox" role="switch" id="consented">
-            <label class="form-check-label" for="consented">did this person consent this attack?</label>
+            <input name="consented_sender" class="form-check-input" type="checkbox" role="switch" id="consented_sender">
+            <label class="form-check-label" for="consented_sender">did the sender consent to the acquisition in
+               question?</label>
+         </div>
+
+         <div class="form-check form-switch">
+            <input name="consented_recipient" class="form-check-input" type="checkbox" role="switch"
+               id="consented_recipient">
+            <label class="form-check-label" for="consented_recipient">did the recipient consent to the acquisition in
+               question?</label>
          </div>
 
          <div class="form-check form-switch">
@@ -113,7 +148,7 @@
          </div>
       </div>
 
-         <button id="submitButton" class="btn btn-primary mb-3">Submit</button>
+      <button id="submitButton" class="btn btn-primary mb-3">Submit</button>
 
       <!-- </form> -->
 
@@ -122,13 +157,14 @@
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script>
       let output_str = ""
-      
-      function getResults () {
+      let request = null;
+
+      function getResults() {
          console.log("let's do results")
          if ($('#acquired').is(':checked')) {
-            output_str = output_str + `ASSERT acquired(communication) <=> TRUE`
+            output_str = output_str + `ASSERT acquired(communication) <=> TRUE;`
          } else {
-            output_str = output_str + `ASSERT acquired(communication) <=> FALSE`
+            output_str = output_str + `ASSERT acquired(communication) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
@@ -171,11 +207,23 @@
             output_str = output_str + `ASSERT known_and_particular(sender) <=> FALSE;`
          }
 
-         if ($('#US_location').is(':checked')) {
+         output_str = output_str + '\n'
+
+         if ($('#US_location_sender').is(':checked')) {
             output_str = output_str + `ASSERT location(sender, US) <=> TRUE;`
          } else {
             output_str = output_str + `ASSERT location(sender, US) <=> FALSE;`
          }
+
+         output_str = output_str + '\n'
+
+         if ($('#US_location_attacker').is(':checked')) {
+            output_str = output_str + `ASSERT location(attacker, US) <=> TRUE;`
+         } else {
+            output_str = output_str + `ASSERT location(attacker, US) <=> FALSE;`
+         }
+
+         output_str = output_str + '\n'
 
          if ($('#intended_recipients_US').is(':checked')) {
             output_str = output_str + `ASSERT US_person(intended_recipients) <=> TRUE;`
@@ -183,101 +231,109 @@
             output_str = output_str + `ASSERT US_person(intended_recipients) <=> FALSE;`
          }
 
+         output_str = output_str + '\n'
+
+         if ($('#known_and_particular_recipients').is(':checked')) {
+            output_str = output_str + `ASSERT known_and_particular(intended_recipients) <=> TRUE;`
+         } else {
+            output_str = output_str + `ASSERT known_and_particular(intended_recipients) <=> FALSE;`
+         }
+         
+         output_str = output_str + '\n'
+
          if ($('#intended_recipients_in_US').is(':checked')) {
             output_str = output_str + `ASSERT location(intended_recipients, US) <=> TRUE;`
          } else {
             output_str = output_str + `ASSERT location(intended_recipients, US) <=> FALSE;`
          }
 
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
+         output_str = output_str + '\n'
+
+         if ($('#privacy_sender').is(':checked')) {
+            output_str = output_str + `ASSERT privacy(sender) <=> TRUE;`
          } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
+            output_str = output_str + `ASSERT privacy(sender) <=> FALSE;`
          }
 
-         ASSERT privacy(sender) <=> TRUE;
+         output_str = output_str + '\n'
 
-
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
+         if ($('#privacy_recipients').is(':checked')) {
+            output_str = output_str + `ASSERT privacy(intended_recipients) <=> TRUE;`
          } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
+            output_str = output_str + `ASSERT privacy(intended_recipients) <=> FALSE;`
          }
 
-         ASSERT privacy(intended_recipients) <=> TRUE;
+         output_str = output_str + '\n'
 
-
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
+         if ($('#warrant').is(':checked')) {
+            output_str = output_str + `ASSERT warrant(attack) <=> TRUE;`
          } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
+            output_str = output_str + `ASSERT warrant(attack) <=> FALSE;`
          }
 
-         ASSERT warrant(attack) <=> TRUE;
+         output_str = output_str + '\n'
 
-
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
+         if ($('#consented_recipient').is(':checked')) {
+            output_str = output_str + `ASSERT consented(sender) <=> TRUE;`
          } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
+            output_str = output_str + `ASSERT consented(sender) <=> FALSE;`
          }
 
-         ASSERT consented(sender) <=> TRUE;
+         output_str = output_str + '\n'
 
-
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
+         if ($('#consented_recipient').is(':checked')) {
+            output_str = output_str + `ASSERT consented(intended_recipients) <=> TRUE;`
          } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
+            output_str = output_str + `ASSERT consented(intended_recipients) <=> FALSE;`
          }
 
-         ASSERT consented(intended_recipients) <=> TRUE;
+         output_str = output_str + '\n'
 
-
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
+         if ($('#intentional').is(':checked')) {
+            output_str = output_str + `ASSERT intentional(attack) <=> TRUE;`
          } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
+            output_str = output_str + `ASSERT intentional(attack) <=> FALSE;`
          }
 
-         ASSERT location(attacker, US) <=> TRUE;
+         output_str = output_str + '\n'
 
-
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
+         if ($('#covered').is(':checked')) {
+            output_str = output_str + `ASSERT covered(attack) <=> TRUE;`
          } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
+            output_str = output_str + `ASSERT covered(attack) <=> FALSE;`
          }
 
-         ASSERT covered(attack) <=> TRUE;
+         output_str = output_str + '\n'
 
-
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
+         if ($('#monitoring').is(':checked')) {
+            output_str = output_str + `ASSERT monitoring(device) <=> TRUE;`
          } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
+            output_str = output_str + `ASSERT monitoring(device) <=> FALSE;`
          }
 
-         ASSERT intentional(attack) <=> TRUE;
+         output_str = output_str + '\n'
+
+         output_str = encodeURIComponent(output_str);
+
+         console.log(output_str)
+         let url = '/check_FISA?axioms=' + output_str
+
+            if (request != null)
+                request.abort();
+
+            request = $.ajax({
+                type: 'GET',
+                url: url,
+                success: handleResponse
+            });
 
 
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
-         } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
-         }
+      }
 
-         ASSERT monitoring(device) <=> TRUE;
-
+      function handleResponse(response) {
+         console.log("it worked!")
+         $('#electronic_surveillance').html(response);
          
-         if ($('#radio').is(':checked')) {
-            output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
-         } else {
-            output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
-         }
-
-
-
       }
 
 
