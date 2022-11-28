@@ -91,6 +91,8 @@
             output_str = output_str + `ASSERT targeted(sender) <=> FALSE;`
          }
 
+         output_str = output_str + '\n'
+         
          let targeted_recipient = $("#targeted_recipient").val();
          if (targeted_recipient == 1) {
             output_str = output_str + `ASSERT targeted(recipient) <=> TRUE;`
