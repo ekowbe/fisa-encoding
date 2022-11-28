@@ -33,27 +33,27 @@ monitoring: DEVICE -> BOOLEAN;                              % was this device in
 intentional: ATTACK -> BOOLEAN;                             % was acquisition intentional?
 electronic_surveillance: ATTACK -> BOOLEAN;                 % What we want to know.
 
-ASSERT acquired(communication) <=> TRUE;
-ASSERT surveillance_device(device) <=> TRUE;
-ASSERT communication_type(communication, wire) <=> TRUE;
-ASSERT targeted(sender) <=> TRUE;
-ASSERT targeted(intended_recipients) <=> TRUE;
-ASSERT communication_type(communication, radio) <=> TRUE;
-ASSERT US_person(sender) <=> TRUE;
-ASSERT known_and_particular(sender) <=> TRUE;
-ASSERT location(sender, US) <=> TRUE;
-ASSERT location(attacker, US) <=> TRUE;
-ASSERT US_person(intended_recipients) <=> TRUE;
-ASSERT known_and_particular(intended_recipients) <=> TRUE;
-ASSERT location(intended_recipients, US) <=> TRUE;
-ASSERT privacy(sender) <=> TRUE;
-ASSERT privacy(intended_recipients) <=> TRUE;
-ASSERT warrant(attack) <=> TRUE;
-ASSERT consented(sender) <=> FALSE;
+ASSERT acquired(communication) <=> FALSE;
+ASSERT surveillance_device(device) <=> FALSE;
+
+
+
+
+ASSERT US_person(sender) <=> FALSE;
+ASSERT known_and_particular(sender) <=> FALSE;
+
+ASSERT location(attacker, US) <=> FALSE;
+
+ASSERT known_and_particular(intended_recipients) <=> FALSE;
+ASSERT location(intended_recipients, US) <=> FALSE;
+ASSERT privacy(sender) <=> FALSE;
+ASSERT privacy(intended_recipients) <=> FALSE;
+
+ASSERT consented(sender) <=> TRUE;
 ASSERT consented(intended_recipients) <=> TRUE;
-ASSERT intentional(attack) <=> TRUE;
-ASSERT covered(attack) <=> TRUE;
-ASSERT monitoring(device) <=> TRUE;
+
+ASSERT covered(attack) <=> FALSE;
+
 
 ASSERT 
         ( 
