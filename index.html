@@ -18,141 +18,31 @@
    <div class="container">
       <h1 class="display-1">Does FISA apply to you?</h1>
       <!-- <form action="check_FISA" method="GET"> -->
-      <div id="myForm">
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="acquired">
-            <label class="form-check-label" for="acquired">was info or communication acquired?</label>
-         </div>
+      <!-- <div id="myForm"> -->
 
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="surveillance">
-            <label class="form-check-label" for="surveillance">is this device an electronic, mechanical, or other
-               surveillance device?</label>
-         </div>
+      {% for id, question in questions.items() %}
+      <label for="{{id}}" class="form-label">{{question}}</label>
+      <select class="form-select mb-3" aria-label="dropdown for {{id}}" id="{{id}}">
+         <option selected>Select</option>
+         <option value="1">Yes</option>
+         <option value="2">No</option>
+         <option value="3">idk</option>
+      </select>
 
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="wire">
-            <label class="form-check-label" for="wire">was the communication a wire</label>
-         </div>
 
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="radio">
-            <label class="form-check-label" for="radio">was the communication a radio</label>
-         </div>
+      {% endfor %}
 
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="US_location_sender">
-            <label class="form-check-label" for="US_location_sender">was the sender in the United States during the
-               acquisition</label>
-         </div>
 
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="US_location_attacker">
-            <label class="form-check-label" for="US_location_attacker">was the potential attacker in the United States
-               during the acquisition</label>
-         </div>
 
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="targeted">
-            <label class="form-check-label" for="targeted">is this person being intentionally targeted?</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="privacy">
-            <label class="form-check-label" for="privacy">
-               was there a reasonable expectation of privacy for this person?
-            </label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="warrant">
-            <label class="form-check-label" for="warrant">
-               would a warrant be required for law enforcement?
-            </label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="us_person">
-            <label class="form-check-label" for="us_person">is this person considered a US person? or is any person
-               within
-               this list of person considered a US person?</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="known_and_particular" class="form-check-input" type="checkbox" role="switch"
-               id="known_and_particular">
-            <label class="form-check-label" for="known_and_particular">is a person in this list is particular and known
-               to be a US person</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="privacy_sender" class="form-check-input" type="checkbox" role="switch" id="privacy_sender">
-            <label class="form-check-label" for="privacy_sender">Did the sender have a reasonable expectation of
-               privacy</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="privacy_recipients" class="form-check-input" type="checkbox" role="switch"
-               id="privacy_recipients">
-            <label class="form-check-label" for="privacy_recipients">Did the recipient have a reasonable expectation of
-               privacy</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="intended_recipients_US" class="form-check-input" type="checkbox" role="switch"
-               id="intended_recipients_US">
-            <label class="form-check-label" for="intended_recipients_US">are the intended recipients US persons</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="known_and_particular_recipients" class="form-check-input" type="checkbox" role="switch"
-               id="known_and_particular_recipients">
-            <label class="form-check-label" for="known_and_particular_recipients">is a person in the list of intended recipients particular and known
-               to be a US person</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="intended_recipients_in_US" class="form-check-input" type="checkbox" role="switch"
-               id="intended_recipients_in_US">
-            <label class="form-check-label" for="intended_recipients_US">are the intended recipients US persons</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="consented_sender" class="form-check-input" type="checkbox" role="switch" id="consented_sender">
-            <label class="form-check-label" for="consented_sender">did the sender consent to the acquisition in
-               question?</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="consented_recipient" class="form-check-input" type="checkbox" role="switch"
-               id="consented_recipient">
-            <label class="form-check-label" for="consented_recipient">did the recipient consent to the acquisition in
-               question?</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="covered" class="form-check-input" type="checkbox" role="switch" id="covered">
-            <label class="form-check-label" for="covered">is this the communication of computer trespassers, permissible
-               under section 2511(2)(i) of title 18</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="monitoring" class="form-check-input" type="checkbox" role="switch" id="monitoring">
-            <label class="form-check-label" for="monitoring">was this device installed or used for monitoring to acquire
-               info?</label>
-         </div>
-
-         <div class="form-check form-switch">
-            <input name="intentional" class="form-check-input" type="checkbox" role="switch" id="intentional">
-            <label class="form-check-label" for="intentional">was the acquisition intentional?</label>
-         </div>
-      </div>
 
       <button id="submitButton" class="btn btn-primary mb-3">Submit</button>
+   </div>
 
-      <!-- </form> -->
 
-      <p class="resultPar" id="electronic_surveillance"></p>
+
+   <!-- </form> -->
+
+   <p class="resultPar" id="electronic_surveillance"></p>
    </div>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script>
@@ -161,153 +51,210 @@
 
       function getResults() {
          console.log("let's do results")
-         if ($('#acquired').is(':checked')) {
+
+         // add \n at end of each
+
+         let acquired = $("#acquired").val();
+
+         if (acquired == 1) {
             output_str = output_str + `ASSERT acquired(communication) <=> TRUE;`
-         } else {
+         } else if (acquired == 2) {
             output_str = output_str + `ASSERT acquired(communication) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#surveillance').is(':checked')) {
+         let surveillance = $("#surveillance").val();
+
+         if (surveillance == 1) {
             output_str = output_str + `ASSERT surveillance_device(device) <=> TRUE;`
-         } else {
+         } else if (surveillance == 2) {
             output_str = output_str + `ASSERT surveillance_device(device) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#wire').is(':checked')) {
+         let wire = $("#wire").val();
+
+         if (wire == 1) {
             output_str = output_str + `ASSERT communication_type(communication, wire) <=> TRUE;`
-         } else {
+         } else if (wire == 2) {
             output_str = output_str + `ASSERT communication_type(communication, wire) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#radio').is(':checked')) {
+         let targeted_sender = $("#targeted_sender").val();
+         if (targeted_sender == 1) {
+            output_str = output_str + `ASSERT targeted(sender) <=> TRUE;`
+         } else if (targeted_sender == 2) {
+            output_str = output_str + `ASSERT targeted(sender) <=> FALSE;`
+         }
+
+         let targeted_recipient = $("#targeted_recipient").val();
+         if (targeted_recipient == 1) {
+            output_str = output_str + `ASSERT targeted(recipient) <=> TRUE;`
+         } else if (targeted_recipient == 2) {
+            output_str = output_str + `ASSERT targeted(recipient) <=> FALSE;`
+         }
+
+         output_str = output_str + '\n'
+
+         let radio = $("#radio").val();
+
+         if (radio == 1) {
             output_str = output_str + `ASSERT communication_type(communication, radio) <=> TRUE;`
-         } else {
+         } else if (radio == 2) {
             output_str = output_str + `ASSERT communication_type(communication, radio) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#us_person').is(':checked')) {
+         let us_person = $("#us_person").val();
+
+         if (us_person == 1) {
             output_str = output_str + `ASSERT US_person(sender) <=> TRUE;`
-         } else {
+         } else if (acquired == 2) {
             output_str = output_str + `ASSERT US_person(sender) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#known_and_particular').is(':checked')) {
+         let known_and_particular = $("#known_and_particular").val();
+
+         if (known_and_particular == 1) {
             output_str = output_str + `ASSERT known_and_particular(sender) <=> TRUE;`
-         } else {
+         } else if (known_and_particular == 2) {
             output_str = output_str + `ASSERT known_and_particular(sender) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#US_location_sender').is(':checked')) {
+         let US_location_sender = $("#US_location_sender").val();
+
+         if (US_location_sender == 1) {
             output_str = output_str + `ASSERT location(sender, US) <=> TRUE;`
-         } else {
+         } else if (US_location_sender == 2) {
             output_str = output_str + `ASSERT location(sender, US) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#US_location_attacker').is(':checked')) {
+         let US_location_attacker = $("#US_location_attacker").val();
+
+         if (US_location_attacker == 1) {
             output_str = output_str + `ASSERT location(attacker, US) <=> TRUE;`
-         } else {
+         } else if (US_location_attacker == 2) {
             output_str = output_str + `ASSERT location(attacker, US) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#intended_recipients_US').is(':checked')) {
+         let intended_recipients_US = $("#intended_recipients_US").val();
+
+         if (intended_recipients_US == 1) {
             output_str = output_str + `ASSERT US_person(intended_recipients) <=> TRUE;`
-         } else {
+         } else if (intended_recipients_US == 2) {
             output_str = output_str + `ASSERT US_person(intended_recipients) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#known_and_particular_recipients').is(':checked')) {
+         let known_and_particular_recipients = $("#known_and_particular_recipients").val();
+
+         if (known_and_particular_recipients == 1) {
             output_str = output_str + `ASSERT known_and_particular(intended_recipients) <=> TRUE;`
-         } else {
+         } else if (known_and_particular_recipients == 2) {
             output_str = output_str + `ASSERT known_and_particular(intended_recipients) <=> FALSE;`
          }
-         
+
          output_str = output_str + '\n'
 
-         if ($('#intended_recipients_in_US').is(':checked')) {
+         let intended_recipients_in_US = $("#intended_recipients_in_US").val();
+
+         if (intended_recipients_in_US == 1) {
             output_str = output_str + `ASSERT location(intended_recipients, US) <=> TRUE;`
-         } else {
+         } else if (acquired == 2) {
             output_str = output_str + `ASSERT location(intended_recipients, US) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#privacy_sender').is(':checked')) {
+         let privacy_sender = $("#privacy_sender").val();
+
+         if (privacy_sender == 1) {
             output_str = output_str + `ASSERT privacy(sender) <=> TRUE;`
-         } else {
+         } else if (privacy_sender == 2) {
             output_str = output_str + `ASSERT privacy(sender) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#privacy_recipients').is(':checked')) {
+         let privacy_recipients = $("#privacy_recipients").val();
+
+         if (privacy_recipients == 1) {
             output_str = output_str + `ASSERT privacy(intended_recipients) <=> TRUE;`
-         } else {
+         } else if (privacy_recipients == 2) {
             output_str = output_str + `ASSERT privacy(intended_recipients) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#warrant').is(':checked')) {
+         let warrant = $("#warrant").val();
+
+         if (warrant == 1) {
             output_str = output_str + `ASSERT warrant(attack) <=> TRUE;`
-         } else {
+         } else if (warrant == 2) {
             output_str = output_str + `ASSERT warrant(attack) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#consented_recipient').is(':checked')) {
+         let consented_sender = $("#consented_sender").val();
+
+         if (consented_sender == 1) {
             output_str = output_str + `ASSERT consented(sender) <=> TRUE;`
-         } else {
+         } else if (consented_sender == 2) {
             output_str = output_str + `ASSERT consented(sender) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#consented_recipient').is(':checked')) {
+         let consented_recipient = $("#consented_recipient").val();
+
+         if (consented_recipient == 1) {
             output_str = output_str + `ASSERT consented(intended_recipients) <=> TRUE;`
-         } else {
+         } else if (consented_recipient == 2) {
             output_str = output_str + `ASSERT consented(intended_recipients) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#intentional').is(':checked')) {
+         let intentional = $("#intentional").val();
+
+         if (intentional == 1) {
             output_str = output_str + `ASSERT intentional(attack) <=> TRUE;`
-         } else {
+         } else if (intentional == 2) {
             output_str = output_str + `ASSERT intentional(attack) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#covered').is(':checked')) {
+         let covered = $("#covered").val();
+
+         if (covered == 1) {
             output_str = output_str + `ASSERT covered(attack) <=> TRUE;`
-         } else {
+         } else if (covered == 2) {
             output_str = output_str + `ASSERT covered(attack) <=> FALSE;`
          }
 
          output_str = output_str + '\n'
 
-         if ($('#monitoring').is(':checked')) {
+         let monitoring = $("#monitoring").val();
+
+         if (monitoring == 1) {
             output_str = output_str + `ASSERT monitoring(device) <=> TRUE;`
-         } else {
+         } else if (monitoring == 2) {
             output_str = output_str + `ASSERT monitoring(device) <=> FALSE;`
          }
 
@@ -318,14 +265,14 @@
          console.log(output_str)
          let url = '/check_FISA?axioms=' + output_str
 
-            if (request != null)
-                request.abort();
+         if (request != null)
+            request.abort();
 
-            request = $.ajax({
-                type: 'GET',
-                url: url,
-                success: handleResponse
-            });
+         request = $.ajax({
+            type: 'GET',
+            url: url,
+            success: handleResponse
+         });
 
 
       }
@@ -333,7 +280,7 @@
       function handleResponse(response) {
          console.log("it worked!")
          $('#electronic_surveillance').html(response);
-         
+
       }
 
 

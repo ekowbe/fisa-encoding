@@ -22,8 +22,37 @@ app = Flask(__name__, template_folder='.')
 def index():
     """home page"""
 
+    questions = {
+        "acquired": "was info or communication acquired?",
+        "surveillance": "is this device an electronic, mechanical, or other surveillance device?",
+        "wire": "was the communication a wire?",
+        "radio": "was the communication a radio?",
+        "US_location_sender": "was the sender in the United States during the acquisition?",
+        "US_location_attacker": "was the potential attacker in the United States during the acquisition?",
+        "targeted_sender": "was the sender targeted?",
+        "targeted_recipient": "was the recipient targeted?",
+        "privacy": "was there a reasonable expectation of privacy for this person?",
+        "warrant": "would a warrant be required for law enforcement?",
+        "us_person": "is this person considered a US person? or is any person within this list of person considered a US person?",
+        "known_and_particular": "is a person in this list is particular and known to be a US person?",
+        "privacy_sender": "did the sender have a reasonable expectation of privacy?",
+        "privacy_recipients": "did the recipient have a reasonable expectation of privacy?",
+        "intended_recipients_US": "are the intended recipients US persons?",
+        "known_and_particular_recipients": "is a person in the list of intended recipients particular and known to be a US person?",
+        "intended_recipients_in_US": "are the intended recipients US persons?",
+        "consented_sender": "did the sender consent to the acquisition in question?",
+        "consented_recipient": "did the recipient consent to the acquisition in question?",
+        "covered": "is this the communication of computer trespassers, permissible under section 2511(2)(i) of title 18?",
+        "monitoring": "was this device installed or used for monitoring to acquire info?",
+        "intentional": "was the acquisition intentional?",
+
+    }
+
+
+
     html = render_template('index.html',
-                            success=None)
+                            success=None,
+                            questions=questions)
     response = make_response(html)
     return response
 

@@ -36,6 +36,7 @@ electronic_surveillance: ATTACK -> BOOLEAN;                 % What we want to kn
 ASSERT acquired(communication) <=> TRUE;
 ASSERT surveillance_device(device) <=> TRUE;
 ASSERT communication_type(communication, wire) <=> TRUE;
+ASSERT targeted(sender) <=> TRUE;ASSERT targeted(recipient) <=> TRUE;
 ASSERT communication_type(communication, radio) <=> TRUE;
 ASSERT US_person(sender) <=> TRUE;
 ASSERT known_and_particular(sender) <=> TRUE;
